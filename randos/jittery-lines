@@ -1,0 +1,35 @@
+var g = {
+  w: window.innerWidth,
+  h: window.innerHeight
+};
+
+var start = {
+  x: 20,
+  y: 20
+};
+var stop = {
+  x: g.w,
+  y: g.h
+};
+
+var x = start.x;
+var y = start.y;
+
+var step = 0.005;
+var pct = 0.0;
+
+function setup() {
+  createCanvas(g.w, g.h);
+  colorMode(RGB);
+}
+
+function draw() {
+  background(204);
+
+  for (var x = 20; x < width; x += width / 5) {
+    var mx = mouseX / 10;
+    var offsetA = random(-mx, mx);
+    var offsetB = random(-mx, mx);
+    line(x + offsetA, 20, x - offsetB, 100);
+  }
+}
