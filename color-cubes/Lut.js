@@ -1,7 +1,7 @@
-window.ApocalypseLUT = function() {
-  this.DIM = 33;
+window.LUT = function(LUTValues, dim) {
+  this.DIM = dim;
 
-  this.LUT = window.apocalypseLUTValues;
+  this.LUT = LUTValues;
 
   // Each param ranges between 0 - 32. Has to be an integer since it's an array lookup.
   this.lookup = function(r, g, b, isBtwn0And1) {

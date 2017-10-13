@@ -1,6 +1,7 @@
 const identityLUT = new IdentityLUT();
-const apocalypseLUT = new ApocalypseLUT();
-console.log("created LUT");
+const a1LUT = new LUT(window.apocalypseLUTValues, 33);
+const a2LUT = new LUT(window.apocalypseLUTValues, 33);
+const myLerpedLUT = myLUTLerp(identityLUT.LUT, a2LUT.LUT, 0.78);
 
 const cWidth = window.innerWidth;
 const cHeight = window.innerHeight;
@@ -31,7 +32,7 @@ function draw() {
           x * pxScale - cubeLength / 2
         );
 
-        var color = apocalypseLUT.lookup(x, y, z);
+        var color = myLerpedLUT.lookup(x, y, z);
 
         if (logged < 3) {
           logged++;
@@ -59,9 +60,48 @@ function fromIntToNorm(num) {
 
 function fromNormTo8Bit(num) {
   return num * 255;
-  // #fffff = rgb(255, 255, 255)
 }
 
+function myLerp(low, high, intensity) {
+  return (1 - intensity) * low + intensity * high;
+}
+
+function myColorLerp(r1, g1, b1, r2, g2, b2, intensity) {
+  return {
+    r: myLerp(r1, r2, intensity),
+    g: myLerp(b1, b2, intensity),
+    b: myLerp(g1, g2, intensity)
+  };
+}
+
+function myLUTLerp(lut1, lut2, intensity) {
+  var logger = 0;
+
+  lerpLUTValues = [];
+
+  if (lut1.length !== lut2.length) {
+    throw new Error("Provided LUTs of different lengths.");
+  }
+
+  for (var i = 0; i < lut1.length; i++) {
+    var lerpVal = myLerp(lut1[i], lut2[i], intensity);
+    lerpLUTValues.push(lerpVal);
+
+    if (logger < 4) {
+      console.log("lut1", lut1[i], lut2[i], lerpVal);
+      logger++;
+    }
+  }
+
+  console.log("myLUTLerp");
+  console.log(lerpLUTValues.length);
+
+  return new LUT(lerpLUTValues, 33);
+}
+
+/*
+Old
+*/
 function drawOriginalCube() {
   const scaleFactor = 1;
 
@@ -92,15 +132,3 @@ function drawOriginalCube() {
     }
   }
 }
-
-// Given an R, G, B, looks it up in the moonriseLUT.
-function moonrisify(r, g, b) {
-  var moonriseIndex = b / 32 + g / 32 + r / 32;
-}
-
-// // Moonrise LUT
-// [
-//   [r,g,b],
-//   [r,g,b],
-//   ...
-// ]
