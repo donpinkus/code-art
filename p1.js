@@ -1,4 +1,6 @@
 const identityLUT = new IdentityLUT();
+const apocalypseLUT = new ApocalypseLUT();
+console.log("created LUT");
 
 const cWidth = window.innerWidth;
 const cHeight = window.innerHeight;
@@ -28,7 +30,8 @@ function draw() {
           y * pxScale * -1 + cubeLength / 2,
           x * pxScale - cubeLength / 2
         );
-        var color = identityLUT.lookup(x, y, z);
+
+        var color = apocalypseLUT.lookup(x, y, z);
 
         if (logged < 3) {
           logged++;
