@@ -12,19 +12,17 @@ function draw() {
   // canvas background color
   background(33, 33, 33);
 
-  const scaleFactor = 1;
+  const scaleFactor = 27;
+  const maxIncr = 17;
+  const colorScaleFactor = maxIncr - 1;
 
-  const stepSize = 8;
-  const colorScaleFactor = 255 / (stepSize - 1);
+  const cubeLength = scaleFactor * maxIncr;
 
-  const cubeLength = 255 * scaleFactor;
   const translateOrigin = cubeLength / 2;
 
-  const radius = 2;
-
-  for (let b = 0; b < 255; b += stepSize) {
-    for (let g = 0; g < 255; g += stepSize) {
-      for (let r = 0; r < 255; r += stepSize) {
+  for (let b = 0; b < maxIncr; b++) {
+    for (let g = 0; g < maxIncr; g++) {
+      for (let r = 0; r < maxIncr; r++) {
         // Draw a sphere with a color, at a location.
         push();
 
@@ -34,22 +32,10 @@ function draw() {
           r * scaleFactor - translateOrigin
         );
 
-        fill(r, g, b);
-        box(radius, radius, radius);
+        fill(r * colorScaleFactor, g * colorScaleFactor, b * colorScaleFactor);
+        sphere(2);
         pop();
       }
     }
   }
 }
-
-// Given an R, G, B, looks it up in the moonriseLUT.
-function moonrisify(r, g, b) {
-  var moonriseIndex = b / 32 + g / 32 + r / 32;
-}
-
-// // Moonrise LUT
-// [
-//   [r,g,b],
-//   [r,g,b],
-//   ...
-// ]
