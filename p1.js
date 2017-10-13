@@ -1,7 +1,5 @@
 const identityLUT = new IdentityLUT();
 const a1LUT = new LUT(window.apocalypseLUTValues, 33);
-const a2LUT = new LUT(window.apocalypseLUTValues, 33);
-const myLerpedLUT = myLUTLerp(identityLUT.LUT, a2LUT.LUT, 0.78);
 
 const cWidth = window.innerWidth;
 const cHeight = window.innerHeight;
@@ -9,7 +7,7 @@ const cHeight = window.innerHeight;
 const cubeLength = cHeight / 2;
 const pxScale = cubeLength / 33;
 
-let logged = 0;
+let rotation = 0;
 
 function setup() {
   createCanvas(cWidth, cHeight, WEBGL);
@@ -17,7 +15,12 @@ function setup() {
 }
 
 function draw() {
+  const myLerpedLUT = myLUTLerp(identityLUT.LUT, a1LUT.LUT, mouseX / cWidth);
+
   orbitControl();
+
+  rotateY(radians(rotation));
+  rotation++;
 
   // canvas background color
   background(33, 33, 33);
@@ -33,10 +36,6 @@ function draw() {
         );
 
         var color = myLerpedLUT.lookup(x, y, z);
-
-        if (logged < 3) {
-          logged++;
-        }
 
         fill(
           fromNormTo8Bit(color.r),
@@ -75,8 +74,6 @@ function myColorLerp(r1, g1, b1, r2, g2, b2, intensity) {
 }
 
 function myLUTLerp(lut1, lut2, intensity) {
-  var logger = 0;
-
   lerpLUTValues = [];
 
   if (lut1.length !== lut2.length) {
@@ -86,17 +83,26 @@ function myLUTLerp(lut1, lut2, intensity) {
   for (var i = 0; i < lut1.length; i++) {
     var lerpVal = myLerp(lut1[i], lut2[i], intensity);
     lerpLUTValues.push(lerpVal);
-
-    if (logger < 4) {
-      console.log("lut1", lut1[i], lut2[i], lerpVal);
-      logger++;
-    }
   }
 
-  console.log("myLUTLerp");
-  console.log(lerpLUTValues.length);
-
   return new LUT(lerpLUTValues, 33);
+}
+
+function checkEquality(a, b, sigDigits) {
+  return Math.abs(a - b) < 1 / (sigDigits * 10);
+}
+
+// Given a normalized R, G, B, get the LUT RGB
+function getLUTValue(r, g, b, lut) {
+  // If it falls on a point, return that point.
+  // We have a point every 1 / 33 * n, with n between 0 and 33.
+  if (
+    checkEquality(r % (1 / 33), 3) &&
+    checkEquality(g % (1 / 33), 3) &&
+    checkEquality(b % (1 / 33), 3)
+  ) {
+    lut.lookup(r, g, b);
+  }
 }
 
 /*
