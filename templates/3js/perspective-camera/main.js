@@ -1,4 +1,5 @@
 var camera, scene, renderer, controls;
+var sphere, cube;
 
 document.addEventListener("DOMContentLoaded", onDocumentReady);
 
@@ -17,7 +18,7 @@ function init() {
   );
 
   // Sets the position to a Vector3 angle, then sets the length.
-  camera.position.set(0.5, 1, 1).setLength(700);
+  camera.position.set(0, 0, 1).setLength(100);
 
   renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -28,56 +29,18 @@ function init() {
   addObjects();
 }
 
-function animate() {
-  requestAnimationFrame(animate);
-  renderer.render(scene, camera);
-}
-
 function addObjects() {
   addHelpers(true, true);
-
-  const pointCloud = new PointCloud(33, 10, 4);
-  scene.add(pointCloud);
-}
-
-function PointCloud(count = 33, spacing = 10, size = 2) {
-  var material = new THREE.PointsMaterial({
-    vertexColors: THREE.VertexColors,
-    size
-  });
-
-  var geometry = new THREE.Geometry();
-
-  _.times(count, function(xi) {
-    _.times(count, function(yi) {
-      _.times(count, function(zi) {
-        var x = xi * spacing;
-        var y = yi * spacing;
-        var z = zi * spacing;
-
-        var r = xi / count;
-        var g = yi / count;
-        var b = zi / count;
-
-        var particle = new THREE.Vector3(x, y, z);
-        geometry.vertices.push(particle);
-
-        var color = new THREE.Color().setRGB(r, g, b);
-        geometry.colors.push(color);
-      });
-    });
-  });
-
-  var pointCloud = new THREE.Points(geometry, material);
-
-  pointCloud.position.set(
-    count * spacing * -0.5,
-    count * spacing * -0.5,
-    count * spacing * -0.5
+  cube = new THREE.Mesh(
+    new THREE.BoxGeometry(10, 10, 10),
+    new THREE.MeshNormalMaterial()
   );
-  return pointCloud;
+
+  cube.position.set(20, 0, 0);
+  scene.add(cube);
 }
 
+// Arguments are all booleans for whether to include them or not.
 function addHelpers(axis, x, y, z) {
   var xGridHelper = new THREE.GridHelper(
     100,
@@ -107,4 +70,13 @@ function addHelpers(axis, x, y, z) {
 
   var axisHelper = new THREE.AxisHelper(100);
   axis && scene.add(axisHelper);
+}
+
+function animate() {
+  requestAnimationFrame(animate);
+  cube.rotation.x += 0.01;
+  cube.rotation.y += 0.005;
+  cube.rotation.z += 0.0025;
+
+  renderer.render(scene, camera);
 }
