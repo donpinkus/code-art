@@ -24,7 +24,7 @@ class LUT {
     };
   }
 
-  /* In progress */
+  /* TODO: In progress */
   getLUTValue(r, g, b) {
     // If it falls on a point, return that point.
     // We have a point every 1 / 33 * n, with n between 0 and 33.
@@ -81,5 +81,20 @@ class LUT {
     }
 
     return new LUT(lerpLUTValues, 33);
+  }
+
+  /* TODO: In progress */
+  static getLUTValuesFromFile(file) {
+    // First line is title
+    // Second line is dim
+    const lines = file.split(/\n/);
+    const dim = lines[1].split(" ")[1];
+
+    const dataLines = lines.splice(0, 2);
+
+    // 1D array of color LUT values.
+    const vals = dataLines.join(" ").split(" ");
+
+    return vals;
   }
 }

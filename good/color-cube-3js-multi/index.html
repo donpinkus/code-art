@@ -1,0 +1,28 @@
+<html>
+  <head>
+    <script src="/lib/three.js" type="text/javascript"></script>
+    <script src="/lib/three.orbitcontrols.js" type="text/javascript"></script>
+    <script src="/lib/lodash.js"></script>
+    <script src="/lib/dat.gui.js"></script>
+    <script src="/lib/stats.min.js"></script>
+    <script src="/lib/don/threejs-guides.js"></script>
+    <script src="/color-cubes/Lut.js"></script>
+    <script src="/color-cubes/ApocalypseLUTValues.js"></script>
+    <script src="./main.js"></script>
+    <link href="./reset.css" type="text/css" rel="stylesheet">
+    <link href="./main.css" type="text/css" rel="stylesheet">
+    <style>
+      html, body { margin: 0; background: rgb(33, 33, 33); }
+      html { max-height: 100vh; overflow: hidden; }
+      canvas z{ width: 100%; height: 100%; }
+    </style>
+  </head>
+  <body>
+    <div class="Picker">
+      <p>Choose a color cube:</p>
+      <br/>
+      <p class="Picker-Item" data-cube="identity">Identity</p>
+      <p class="Picker-Item" data-cube="apocalypse">Apocalypse</p>
+    </div>
+  </body>
+</html>
