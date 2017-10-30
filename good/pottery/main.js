@@ -5,7 +5,8 @@ let globals = {
   objects: {},
   points: [],
   isMouseDown: false,
-  mode: "draw"
+  mode: "draw",
+  elements: {}
 };
 
 function addStats() {
@@ -36,32 +37,37 @@ function onDocumentReady() {
 
   document.addEventListener("keydown", onKeyDown);
 
-  const eDrawBtn = document.querySelector("#draw");
-  const eLookBtn = document.querySelector("#look");
+  globals.elements.eDrawBtn = document.querySelector("#draw");
+  globals.elements.eLookBtn = document.querySelector("#look");
+  globals.elements.example = document.querySelector(".example");
 
-  const eDrawInstructions = document.querySelector(".draw-instructions");
-  const eLookInstructions = document.querySelector(".look-instructions");
+  globals.elements.eDrawInstructions = document.querySelector(
+    ".draw-instructions"
+  );
+  globals.elements.eLookInstructions = document.querySelector(
+    ".look-instructions"
+  );
 
-  eDrawBtn.addEventListener("click", e => {
+  globals.elements.eDrawBtn.addEventListener("click", e => {
     globals.mode = "draw";
     controls.enabled = false;
 
     e.currentTarget.classList.add("active");
-    eLookBtn.classList.remove("active");
+    globals.elements.eLookBtn.classList.remove("active");
 
-    eDrawInstructions.classList.remove("hidden");
-    eLookInstructions.classList.add("hidden");
+    globals.elements.eDrawInstructions.classList.remove("hidden");
+    globals.elements.eLookInstructions.classList.add("hidden");
   });
 
-  eLookBtn.addEventListener("click", e => {
+  globals.elements.eLookBtn.addEventListener("click", e => {
     globals.mode = "look";
     controls.enabled = true;
 
     e.currentTarget.classList.add("active");
-    eDrawBtn.classList.remove("active");
+    globals.elements.eDrawBtn.classList.remove("active");
 
-    eDrawInstructions.classList.add("hidden");
-    eLookInstructions.classList.remove("hidden");
+    globals.elements.eDrawInstructions.classList.add("hidden");
+    globals.elements.eLookInstructions.classList.remove("hidden");
   });
 }
 
@@ -174,5 +180,7 @@ function onMouseMove(e) {
   if (globals.isMouseDown && globals.mode === "draw") {
     globals.points.push({ x: e.clientX, y: e.clientY });
     addLathe(globals.points);
+
+    globals.elements.example.classList.add("hidden");
   }
 }

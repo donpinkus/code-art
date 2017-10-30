@@ -1,20 +1,17 @@
 let camera, scene, renderer, controls;
 
-let Colors = {
-  red: 0xf25346,
-  white: 0xd8d0d1,
-  brown: 0x59332e,
-  pink: 0xf5986e,
-  brownDark: 0x23190f,
-  blue: 0x68c3c0
-};
-
 let objects = {};
+
+let updateCount = 0;
 
 document.addEventListener("DOMContentLoaded", onDocumentReady);
 
 function onDocumentReady() {
   init();
+
+  navigator.mediaDevices
+    .getUserMedia({ audio: true })
+    .then(stream => handleStreaming(stream));
 }
 
 function init() {
@@ -36,10 +33,6 @@ function init() {
   controls = new THREE.OrbitControls(camera, renderer.domElement);
 
   addHelpers(true, true);
-
-  navigator.mediaDevices
-    .getUserMedia({ audio: true })
-    .then(stream => handleStreaming(stream));
 }
 
 function handleStreaming(stream) {
@@ -48,6 +41,9 @@ function handleStreaming(stream) {
   var source = audioCtx.createMediaStreamSource(stream);
   window.analyser = audioCtx.createAnalyser();
   source.connect(analyser);
+
+  addLights();
+  drawPlane();
 
   draw();
 }
@@ -65,15 +61,43 @@ function draw() {
   var frequencyArray = new Uint8Array(bufferLength);
   analyser.getByteFrequencyData(frequencyArray);
 
-  console.log(frequencyArray[250]);
+  // console.log(frequencyArray[250]);
 
   drawLine("wave", waveformArray, "white");
-
   drawLine("freq", frequencyArray, "red");
+  updatePlane(frequencyArray);
 
   renderer.render(scene, camera);
 
   requestAnimationFrame(draw);
+}
+
+function drawPlane() {
+  let material = new THREE.MeshNormalMaterial({
+    color: "rgb(236, 157, 117)",
+    wireframe: true
+  });
+
+  let geometry = new THREE.PlaneGeometry(80, 40, 512, 500);
+
+  window.plane = new THREE.Mesh(geometry, material);
+  plane.rotation.x = -Math.PI / 2;
+  scene.add(plane);
+
+  console.log(window.plane.geometry.vertices[500]);
+}
+
+function updatePlane(data) {
+  data.forEach((d, i) => {
+    const oldVert = plane.geometry.vertices[updateCount * 500 + i];
+    const index = updateCount * 512 + i;
+    // console.log(plane.geometry.vertices[index].y);
+    plane.geometry.vertices[index].z = d / 255 * 100;
+  });
+
+  plane.geometry.verticesNeedUpdate = true;
+
+  updateCount == 500 ? (updateCount = 0) : updateCount++;
 }
 
 function drawLine(name, data, color) {
@@ -96,4 +120,19 @@ function drawLine(name, data, color) {
   } else {
     objects[name].geometry = geometry;
   }
+}
+
+function addLights() {
+  shadowLight = new THREE.DirectionalLight(0xffffff, 0.9);
+  shadowLight.position.set(150, 150, 150);
+  shadowLight.castShadow = true;
+  scene.add(shadowLight);
+
+  ambientLight = new THREE.AmbientLight(0xdc8874, 0.5);
+  scene.add(ambientLight);
+
+  var geometry = new THREE.SphereGeometry(5, 32, 32);
+  var material = new THREE.MeshNormalMaterial({ color: 0xffff00 });
+  var sphere = new THREE.Mesh(geometry, material);
+  scene.add(sphere);
 }

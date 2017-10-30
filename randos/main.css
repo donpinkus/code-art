@@ -1,0 +1,30 @@
+html {
+  font-family: sans-serif;
+}
+
+.Picker {
+  background: rgba(255, 255, 255, 0.8);
+  margin: 15px;
+  width: 175px;
+  position: absolute;
+  padding: 15px;
+  border-radius: 3px;
+}
+
+.Picker-Item {
+  padding: 10px 15px;
+  background: #1189ff;
+  border-radius: 5px;
+  color: white;
+  text-align: center;
+  font-weight: 300;
+  cursor: pointer;
+}
+
+.Picker-Item:hover {
+  background: #1b81e6;
+}
+
+.Picker-Item + .Picker-Item {
+  margin-top: 5px;
+}

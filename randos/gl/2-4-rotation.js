@@ -1,60 +1,119 @@
-var VSHADER_SOURCE = `
-  attribute vec4 a_Position;
-  uniform float u_CosB, u_SinB;
+// RotatingTriangle.js (c) 2012 matsuda
+// Vertex shader program
+var VSHADER_SOURCE =
+  "attribute vec4 a_Position;\n" +
+  "uniform mat4 u_ModelMatrix;\n" +
+  "void main() {\n" +
+  "  gl_Position = u_ModelMatrix * a_Position;\n" +
+  "}\n";
 
-  void main() {
-    gl_Position.x = a_Position.x * u_CosB - a_Position.y * u_SinB;
-    gl_Position.y = a_Position.x * u_SinB + a_Position.y * u_CosB;
-    gl_Position.z = a_Position.z;
-    gl_Position.w = 1.0;
-  }
-`;
+// Fragment shader program
+var FSHADER_SOURCE =
+  "void main() {\n" + "  gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n" + "}\n";
 
-var FSHADER_SOURCE = `
-  void main() {
-    gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
-  }
-`;
-
-var ANGLE = 90.0;
+// Rotation angle (degrees/second)
+var ANGLE_STEP = 2.0;
 
 function main() {
-  const canvas = document.getElementById("example");
-  const gl = getWebGLContext(canvas);
+  // Retrieve <canvas> element
+  var canvas = document.getElementById("webgl");
 
-  initShaders(gl, VSHADER_SOURCE, FSHADER_SOURCE);
+  // Get the rendering context for WebGL
+  var gl = getWebGLContext(canvas);
+  if (!gl) {
+    console.log("Failed to get the rendering context for WebGL");
+    return;
+  }
 
-  // Clear
-  gl.clearColor(0.0, 0.0, 1.0, 1.0);
-  gl.clear(gl.COLOR_BUFFER_BIT);
+  // Initialize shaders
+  if (!initShaders(gl, VSHADER_SOURCE, FSHADER_SOURCE)) {
+    console.log("Failed to intialize shaders.");
+    return;
+  }
 
-  // 1. Create a buffer object
-  const vertexBuffer = gl.createBuffer();
+  // Write the positions of vertices to a vertex shader
+  var n = initVertexBuffers(gl);
+  if (n < 0) {
+    console.log("Failed to set the positions of the vertices");
+    return;
+  }
 
-  // 2. Bind the buffer object to target. Basically sets ARRAY_BUFFER (the target) equal to vertexBuffer.
+  // Specify the color for clearing <canvas>
+  gl.clearColor(0.0, 0.0, 0.0, 1.0);
+
+  // Get storage location of u_ModelMatrix
+  var u_ModelMatrix = gl.getUniformLocation(gl.program, "u_ModelMatrix");
+  if (!u_ModelMatrix) {
+    console.log("Failed to get the storage location of u_ModelMatrix");
+    return;
+  }
+
+  // Current rotation angle
+  var currentAngle = 0.0;
+  // Model matrix
+  var modelMatrix = new Matrix4();
+
+  // Start drawing
+  var tick = function() {
+    currentAngle = animate(currentAngle); // Update the rotation angle
+    draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix); // Draw the triangle
+    requestAnimationFrame(tick, canvas); // Request that the browser calls tick
+  };
+  tick();
+}
+
+function initVertexBuffers(gl) {
+  var vertices = new Float32Array([0, 0.5, -0.5, -0.5, 0.5, -0.5]);
+  var n = 3; // The number of vertices
+
+  // Create a buffer object
+  var vertexBuffer = gl.createBuffer();
+  if (!vertexBuffer) {
+    console.log("Failed to create the buffer object");
+    return -1;
+  }
+
+  // Bind the buffer object to target
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-
-  // 3. Write data into the buffer object
-  const vertices = new Float32Array([0.0, 0.5, -0.5, -0.5, 0.5, -0.5]);
-  const n = vertices.length / 2;
+  // Write date into the buffer object
   gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
 
-  // 4. Assign the buffer object to an attribute variable
-  const a_Position = gl.getAttribLocation(gl.program, "a_Position");
+  // Assign the buffer object to a_Position variable
+  var a_Position = gl.getAttribLocation(gl.program, "a_Position");
+  if (a_Position < 0) {
+    console.log("Failed to get the storage location of a_Position");
+    return -1;
+  }
   gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, 0, 0);
 
-  // 5. Enable assignment
+  // Enable the assignment to a_Position variable
   gl.enableVertexAttribArray(a_Position);
 
-  // Define translation
-  const radian = Math.PI * ANGLE / 180.0;
-  const cosB = Math.cos(radian);
-  const sinB = Math.sin(radian);
-  const u_CosB = gl.getUniformLocation(gl.program, "u_CosB");
-  const u_SinB = gl.getUniformLocation(gl.program, "u_SinB");
-  gl.uniform1f(u_CosB, cosB);
-  gl.uniform1f(u_SinB, sinB);
+  return n;
+}
 
-  // Draw three points
-  gl.drawArrays(gl.TRIANGLES, 0, n); // n is 3
+function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
+  // Set the rotation matrix
+  modelMatrix.setRotate(currentAngle, 0, 0, 1); // Rotation angle, rotation axis (0, 0, 1)
+
+  // Pass the rotation matrix to the vertex shader
+  gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+
+  // Clear <canvas>
+  gl.clear(gl.COLOR_BUFFER_BIT);
+
+  // Draw the rectangle
+  gl.drawArrays(gl.TRIANGLES, 0, n);
+}
+
+// Last time that this function was called
+var g_last = Date.now();
+function animate(angle) {
+  // Calculate the elapsed time
+  var now = Date.now();
+  var elapsed = now - g_last;
+  g_last = now;
+  // Update the current rotation angle (adjusted by the elapsed time)
+  var newAngle = angle + ANGLE_STEP;
+  return (newAngle %= 360);
 }
