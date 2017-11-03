@@ -10,7 +10,15 @@ let g = {
   rotationAngle: 2,
   t: 0,
   intensity: 0,
-  intensityAscending: true
+  intensityAscending: true,
+  canvasWidth:
+    (window.innerWidth > window.innerHeight
+      ? window.innerHeight
+      : window.innerWidth) * 0.9,
+  canvasHeight:
+    (window.innerWidth > window.innerHeight
+      ? window.innerHeight
+      : window.innerWidth) * 0.9
 };
 
 /**
@@ -51,8 +59,8 @@ function onDocumentReady(e) {
   g.drawCtx = g.drawCanvas.getContext("2d");
   g.viewCtx = g.viewCanvas.getContext("2d");
 
-  g.drawCanvas.width = g.viewCanvas.width = window.innerWidth;
-  g.drawCanvas.height = g.viewCanvas.height = window.innerHeight;
+  g.drawCanvas.width = g.viewCanvas.width = g.canvasWidth;
+  g.drawCanvas.height = g.viewCanvas.height = g.canvasHeight;
 
   // Translate origins
   g.drawCtx.translate(g.drawCanvas.width / 2, g.drawCanvas.height / 2);
