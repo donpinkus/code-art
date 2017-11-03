@@ -7,9 +7,39 @@ let g = {
   drawCtx: null,
   viewCanvas: null,
   viewCtx: null,
-  rotationAngle: 1,
-  t: 0
+  rotationAngle: 2,
+  t: 0,
+  intensity: 0,
+  intensityAscending: true
 };
+
+/**
+ * A linear interpolator for hexadecimal colors
+ * @param {String} a
+ * @param {String} b
+ * @param {Number} amount
+ * @example
+ * // returns #7F7F7F
+ * lerpColor('#000000', '#ffffff', 0.5)
+ * @returns {String}
+ */
+function lerpColor(a, b, amount) {
+  var ah = parseInt(a.replace(/#/g, ""), 16),
+    ar = ah >> 16,
+    ag = (ah >> 8) & 0xff,
+    ab = ah & 0xff,
+    bh = parseInt(b.replace(/#/g, ""), 16),
+    br = bh >> 16,
+    bg = (bh >> 8) & 0xff,
+    bb = bh & 0xff,
+    rr = ar + amount * (br - ar),
+    rg = ag + amount * (bg - ag),
+    rb = ab + amount * (bb - ab);
+
+  return (
+    "#" + (((1 << 24) + (rr << 16) + (rg << 8) + rb) | 0).toString(16).slice(1)
+  );
+}
 
 document.addEventListener("DOMContentLoaded", onDocumentReady);
 document.addEventListener("mousemove", onMouseMove);
@@ -40,7 +70,7 @@ function onMouseMove(e) {
     y: e.clientY
   };
 
-  console.log(g.mousePos.x, g.mousePos.y);
+  // console.log(g.mousePos.x, g.mousePos.y);
 }
 
 function draw() {
@@ -57,11 +87,21 @@ function draw() {
 
   const drawY = transY * Math.cos(radianAngle) + transX * Math.sin(radianAngle);
 
-  // g.drawCtx.fillStyle = "rgb(0, 0, 255)";
-  // g.drawCtx.fillRect(transX, transY, 10, 10);
+  // Get color
+  if (g.intensity === 99) {
+    g.intensityAscending = false;
+  } else if (g.intensity === 1) {
+    g.intensityAscending = true;
+  }
 
-  g.drawCtx.fillStyle = "rgb(0, 255, 0)";
-  g.drawCtx.fillRect(drawX, drawY, 10, 10);
+  console.log(g.intensity, g.intensityAscending);
+
+  g.intensityAscending ? g.intensity++ : g.intensity--;
+
+  const color = lerpColor("#FF0080", "#FF8C00", g.intensity / 100);
+
+  g.drawCtx.fillStyle = color;
+  g.drawCtx.fillRect(drawX, drawY, 20, 20);
 
   // Copy drawCtx to viewCtx.
   g.viewCtx.rotate(Math.PI / 180 * g.rotationAngle);
