@@ -29,7 +29,7 @@ function onDocumentReady(e) {
   g.viewCtx.translate(g.drawCanvas.width / 2, g.drawCanvas.height / 2);
 
   g.drawCtx.fillStyle = "rgb(0, 255, 0)";
-  g.drawCtx.fillRect(0, 0, 20, 20);
+  g.drawCtx.fillRect(-10, -10, 20, 20);
 
   draw();
 }
@@ -39,21 +39,32 @@ function onMouseMove(e) {
     x: e.clientX,
     y: e.clientY
   };
+
+  console.log(g.mousePos.x, g.mousePos.y);
 }
 
 function draw() {
+  g.t++;
+
   // Draw on canvas
-  g.drawCtx.save();
-  g.drawCtx.fillStyle = "rgb(0, 0, 255)";
-  g.drawCtx.fillRect(
-    g.mousePos.x - window.innerWidth / 2,
-    g.mousePos.y - window.innerHeight / 2,
-    10,
-    10
-  );
-  g.drawCtx.restore();
+  const transX = g.mousePos.x - window.innerWidth / 2;
+  const transY = g.mousePos.y - window.innerHeight / 2;
+
+  const radianAngle = g.rotationAngle * Math.PI / 180 * g.t * -1;
+
+  // Add inverseRotation to mouse position.
+  const drawX = transX * Math.cos(radianAngle) - transY * Math.sin(radianAngle);
+
+  const drawY = transY * Math.cos(radianAngle) + transX * Math.sin(radianAngle);
+
+  // g.drawCtx.fillStyle = "rgb(0, 0, 255)";
+  // g.drawCtx.fillRect(transX, transY, 10, 10);
+
+  g.drawCtx.fillStyle = "rgb(0, 255, 0)";
+  g.drawCtx.fillRect(drawX, drawY, 10, 10);
 
   // Copy drawCtx to viewCtx.
+  g.viewCtx.rotate(Math.PI / 180 * g.rotationAngle);
   g.viewCtx.drawImage(
     g.drawCanvas,
     0, // sourceX
@@ -65,7 +76,6 @@ function draw() {
     g.viewCanvas.width, // destinationWidth
     g.viewCanvas.height // destinationHeight
   );
-  g.viewCtx.restore();
 
   requestAnimationFrame(draw);
 }
