@@ -1,178 +1,71 @@
-let camera, scene, renderer, controls, stats;
-
-let globals = {
-  cameraDimensions: {},
-  objects: {},
-  points: [],
-  isMouseDown: false,
-  mode: "draw"
+let g = {
+  mousePos: {
+    x: 0,
+    y: 0
+  },
+  drawCanvas: null,
+  drawCtx: null,
+  viewCanvas: null,
+  viewCtx: null,
+  rotationAngle: 1,
+  t: 0
 };
 
-function addStats() {
-  (function() {
-    var script = document.createElement("script");
-    script.onload = function() {
-      var stats = new Stats();
-      document.body.appendChild(stats.dom);
-      requestAnimationFrame(function loop() {
-        stats.update();
-        requestAnimationFrame(loop);
-      });
-    };
-    script.src = "//rawgit.com/mrdoob/stats.js/master/build/stats.min.js";
-    document.head.appendChild(script);
-  })();
-}
-
 document.addEventListener("DOMContentLoaded", onDocumentReady);
+document.addEventListener("mousemove", onMouseMove);
 
-function onDocumentReady() {
-  // addStats();
-  init();
+function onDocumentReady(e) {
+  g.drawCanvas = document.getElementById("drawCanvas");
+  g.viewCanvas = document.getElementById("viewCanvas");
 
-  document.addEventListener("mousedown", onMouseDown);
-  document.addEventListener("mouseup", onMouseUp);
-  document.addEventListener("mousemove", onMouseMove);
+  g.drawCtx = g.drawCanvas.getContext("2d");
+  g.viewCtx = g.viewCanvas.getContext("2d");
 
-  document.addEventListener("keydown", onKeyDown);
+  g.drawCanvas.width = g.viewCanvas.width = window.innerWidth;
+  g.drawCanvas.height = g.viewCanvas.height = window.innerHeight;
 
-  const eDrawBtn = document.querySelector("#draw");
-  const eLookBtn = document.querySelector("#look");
+  // Translate origins
+  g.drawCtx.translate(g.drawCanvas.width / 2, g.drawCanvas.height / 2);
+  g.viewCtx.translate(g.drawCanvas.width / 2, g.drawCanvas.height / 2);
 
-  const eDrawInstructions = document.querySelector(".draw-instructions");
-  const eLookInstructions = document.querySelector(".look-instructions");
-
-  eDrawBtn.addEventListener("click", e => {
-    globals.mode = "draw";
-    controls.enabled = false;
-
-    e.currentTarget.classList.add("active");
-    eLookBtn.classList.remove("active");
-
-    eDrawInstructions.classList.remove("hidden");
-    eLookInstructions.classList.add("hidden");
-  });
-
-  eLookBtn.addEventListener("click", e => {
-    globals.mode = "look";
-    controls.enabled = true;
-
-    e.currentTarget.classList.add("active");
-    eDrawBtn.classList.remove("active");
-
-    eDrawInstructions.classList.add("hidden");
-    eLookInstructions.classList.remove("hidden");
-  });
-}
-
-function onKeyDown(e) {
-  if (e.keyCode == 32) {
-    if (globals.mode === "draw") {
-      globals.mode = "look";
-      controls.enabled = true;
-    } else {
-      globals.mode = "draw";
-      controls.enabled = false;
-    }
-  }
-}
-
-function init() {
-  scene = new THREE.Scene();
-
-  const frustrumSize = 100;
-  const aspect = window.innerWidth / window.innerHeight;
-
-  globals.cameraDimensions = {
-    aspect: window.innerWidth / window.innerHeight,
-    frustrumSize: 100,
-    left: frustrumSize * aspect / -2,
-    right: frustrumSize * aspect / 2,
-    top: frustrumSize / 2,
-    bottom: frustrumSize / -2
-  };
-
-  camera = new THREE.OrthographicCamera(
-    globals.cameraDimensions.left,
-    globals.cameraDimensions.right,
-    globals.cameraDimensions.top,
-    globals.cameraDimensions.bottom,
-    1,
-    2000
-  );
-
-  // Sets the position to a Vector3 angle, then sets the length.
-  camera.position.set(0, 0, 100);
-  camera.up = new THREE.Vector3(0, 1, 0);
-  camera.lookAt(new THREE.Vector3(0, 0, 0));
-
-  renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  document.body.appendChild(renderer.domElement);
-
-  controls = new THREE.OrbitControls(camera, renderer.domElement);
-  controls.enabled = false;
-
-  addLathe();
+  g.drawCtx.fillStyle = "rgb(0, 255, 0)";
+  g.drawCtx.fillRect(0, 0, 20, 20);
 
   draw();
 }
 
-function draw() {
-  renderer.render(scene, camera);
+function onMouseMove(e) {
+  g.mousePos = {
+    x: e.clientX,
+    y: e.clientY
+  };
+}
 
-  globals.objects.lathe.rotation.y += 0.005;
+function draw() {
+  // Draw on canvas
+  g.drawCtx.save();
+  g.drawCtx.fillStyle = "rgb(0, 0, 255)";
+  g.drawCtx.fillRect(
+    g.mousePos.x - window.innerWidth / 2,
+    g.mousePos.y - window.innerHeight / 2,
+    10,
+    10
+  );
+  g.drawCtx.restore();
+
+  // Copy drawCtx to viewCtx.
+  g.viewCtx.drawImage(
+    g.drawCanvas,
+    0, // sourceX
+    0, // sourceY - note that source ignores translation. It's not a canvas context, so we choose top left corner of the canvas to start copying pixels.
+    g.drawCanvas.width, // sourceWidth
+    g.drawCanvas.height, // sourceHeight
+    -0.5 * g.viewCanvas.width, // destinationX
+    -0.5 * g.viewCanvas.height, // destinationY
+    g.viewCanvas.width, // destinationWidth
+    g.viewCanvas.height // destinationHeight
+  );
+  g.viewCtx.restore();
 
   requestAnimationFrame(draw);
-}
-
-function addLathe(points = []) {
-  let normalizedPoints = [];
-
-  for (let i = 0; i < points.length; i++) {
-    let scale = globals.cameraDimensions.frustrumSize;
-
-    // Get fractions of width
-    let absDistanceFromCenter = Math.abs(points[i].x - window.innerWidth / 2);
-    let nWidth = absDistanceFromCenter / (window.innerWidth / 2);
-    let nHeight = points[i].y * -1 / window.innerHeight;
-
-    normalizedPoints.push(
-      new THREE.Vector2(
-        nWidth * globals.cameraDimensions.right,
-        nHeight * scale + globals.cameraDimensions.top
-      )
-    );
-  }
-
-  var geometry = new THREE.LatheGeometry(normalizedPoints, 60);
-  geometry.mergeVertices();
-
-  var material = new THREE.MeshNormalMaterial({
-    side: THREE.DoubleSide
-  });
-  var lathe = new THREE.Mesh(geometry, material);
-
-  if (globals.objects.lathe) {
-    scene.remove(globals.objects.lathe);
-  }
-
-  globals.objects.lathe = lathe;
-
-  scene.add(globals.objects.lathe);
-}
-
-function onMouseDown() {
-  globals.isMouseDown = true;
-}
-
-function onMouseUp() {
-  globals.isMouseDown = false;
-}
-
-function onMouseMove(e) {
-  if (globals.isMouseDown && globals.mode === "draw") {
-    globals.points.push({ x: e.clientX, y: e.clientY });
-    addLathe(globals.points);
-  }
 }

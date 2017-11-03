@@ -17,7 +17,7 @@ var FSHADER_SOURCE = `
 `;
 
 function main() {
-  var canvas = document.getElementById("example");
+  var canvas = document.getElementById("canvas");
 
   var gl = getWebGLContext(canvas);
   if (!gl) {

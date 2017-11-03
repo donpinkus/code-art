@@ -1,0 +1,49 @@
+<html>
+  <head>
+    <script src="/lib/stats.min.js"></script>
+
+    <link href="./reset.css" type="text/css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    <link href="./main.css" type="text/css" rel="stylesheet">
+
+    <style>
+      html, body { margin: 0; background: rgb(33, 33, 33); }
+      html { max-height: 100vh; overflow: hidden; }
+      canvas { width: 100%; height: 100%; }
+      .instructions {
+        color: rgba(255, 255, 255, 0.8);
+        /*text-align: center;*/
+        margin-top: 15px;
+        position: absolute;
+        top: 20px;
+        left: 30px;
+        right: 0;
+      }
+      img {
+        -webkit-filter: brightness(350%);
+      }
+      .btn {
+        box-shadow: none !important;
+        border: 1px solid rgba(33, 33, 33, 0.2) !important;
+      }
+      .hidden {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- <div class="instructions">
+      <p class="draw-instructions">
+        Hold down your mouse to draw!
+      </p>
+      <div class="btn-group" role="group" aria-label="Basic example">
+        <button type="button" id="look" class="btn btn-primary">Clear</button>
+      </div>
+    </div> -->
+    <div class="example">
+      <!-- <img src="example.png" /> -->
+    </div>
+    <canvas id="canvas" />
+    <script src="./main.js"></script>
+  </body>
+</html>
