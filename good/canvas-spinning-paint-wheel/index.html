@@ -1,0 +1,45 @@
+<html>
+  <head>
+    <script src="/lib/stats.min.js"></script>
+
+    <link href="./reset.css" type="text/css" rel="stylesheet">
+    <link href="./main.css" type="text/css" rel="stylesheet">
+
+    <style>
+      html, body { margin: 0; }
+      html {
+        max-height: 100vh;
+        overflow: hidden;
+        background: rgb(29, 31, 32);
+      }
+      canvas {
+        background: rgb(29, 31, 32);
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translateX(-50%) translateY(-50%);
+      }
+      .controls {
+        position: absolute;
+        z-index: 2;
+        background: rgba(255, 255, 255, 0.8);
+        padding: 20px;
+        top: 20px;
+        left: 20px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        border-radius: 2px;
+      }
+      .control p {
+        font-weight: 500;
+      }
+      .control + .control {
+        margin-top: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="drawCanvas" style="opacity: 0;"></canvas>
+    <canvas id="viewCanvas" style="opacity: 1;"></canvas>
+    <script src="./main.js"></script>
+  </body>
+</html>
