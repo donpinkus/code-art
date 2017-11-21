@@ -1,28 +1,26 @@
 .App {
-  text-align: center;
+  height: 100vh;
+  background: rgb(22, 24, 32);
+  padding: 2rem;
 }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
+.Header {
+  color: rgba(255, 255, 255, 0.9);
 }
 
-.App-header {
-  background-color: #222;
-  height: 150px;
-  padding: 20px;
-  color: white;
+.Header h1 {
+  font-size: 2rem;
+  font-weight: 300;
+  margin-bottom: 1rem;
 }
 
-.App-title {
-  font-size: 1.5em;
+.NumberInputs-Input {
+  font-size: 1rem
+  text-align: right;
 }
 
-.App-intro {
-  font-size: large;
-}
-
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+.NumberInputs-Input::-webkit-inner-spin-button,
+.NumberInputs-Input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
