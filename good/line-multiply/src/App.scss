@@ -1,0 +1,54 @@
+$f: 20px; // base font size
+$g: 5px; // base grid size
+
+$pink: #ffa8d3;
+$blue: #74b9ee;
+
+.App {
+  height: 100vh;
+  background: rgb(22, 24, 32);
+  padding: $g * 6;
+  font-weight: 400;
+}
+
+.Header {
+  color: rgba(255, 255, 255, 0.9);
+  h1 {
+    font-size: $f * 1.33;
+    font-weight: 200;
+    margin-bottom: $g * 4;
+  }
+}
+
+.NumberInputs {
+  display: flex;
+  align-items: center;
+  font-weight: 200;
+  font-size: $f;
+  &-Input,
+  span {
+    margin-right: $g * 2;
+    font-size: $f;
+    font-weight: 200;
+  }
+  &-Input {
+    text-align: right;
+    background: transparent;
+    border-radius: 3px;
+    padding: $g $g * 2;
+    width: 60px;
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    &--Left {
+      border: 1px solid $pink;
+      color: $pink;
+    }
+    &--Right {
+      border: 1px solid $blue;
+      color: $blue;
+    }
+  }
+}

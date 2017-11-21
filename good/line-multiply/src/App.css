@@ -1,26 +1,38 @@
 .App {
   height: 100vh;
-  background: rgb(22, 24, 32);
-  padding: 2rem;
-}
+  background: #161820;
+  padding: 30px;
+  font-weight: 400; }
 
 .Header {
-  color: rgba(255, 255, 255, 0.9);
-}
+  color: rgba(255, 255, 255, 0.9); }
+  .Header h1 {
+    font-size: 26.6px;
+    font-weight: 200;
+    margin-bottom: 20px; }
 
-.Header h1 {
-  font-size: 2rem;
-  font-weight: 300;
-  margin-bottom: 1rem;
-}
-
-.NumberInputs-Input {
-  font-size: 1rem
-  text-align: right;
-}
-
-.NumberInputs-Input::-webkit-inner-spin-button,
-.NumberInputs-Input::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
+.NumberInputs {
+  display: flex;
+  align-items: center;
+  font-weight: 200;
+  font-size: 20px; }
+  .NumberInputs-Input,
+  .NumberInputs span {
+    margin-right: 10px;
+    font-size: 20px;
+    font-weight: 200; }
+  .NumberInputs-Input {
+    text-align: right;
+    background: transparent;
+    border-radius: 3px;
+    padding: 5px 10px;
+    width: 60px; }
+    .NumberInputs-Input::-webkit-inner-spin-button, .NumberInputs-Input::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0; }
+    .NumberInputs-Input--Left {
+      border: 1px solid #ffa8d3;
+      color: #ffa8d3; }
+    .NumberInputs-Input--Right {
+      border: 1px solid #74b9ee;
+      color: #74b9ee; }

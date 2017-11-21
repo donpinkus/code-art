@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import logo from "./logo.svg";
 import "./App.css";
 
 class App extends Component {
@@ -9,9 +8,17 @@ class App extends Component {
         <div className="Header">
           <h1>Multiple Two Numbers</h1>
           <div className="NumberInputs">
-            <input className="NumberInputs-Input" type="number" value="123" />
+            <input
+              className="NumberInputs-Input NumberInputs-Input--Left"
+              type="number"
+              value="123"
+            />
             <span>x</span>
-            <input className="NumberInputs-Input" type="number" value="234" />
+            <input
+              className="NumberInputs-Input NumberInputs-Input--Right"
+              type="number"
+              value="234"
+            />
             <span>=</span>
             <span>28,782</span>
           </div>
