@@ -1,8 +1,15 @@
+html * {
+  box-sizing: border-box; }
+
 .App {
   height: 100vh;
   background: #161820;
   padding: 30px;
-  font-weight: 400; }
+  font-weight: 400;
+  font-size: 20px;
+  display: flex;
+  height: 100vh;
+  flex-direction: column; }
 
 .Header {
   color: rgba(255, 255, 255, 0.9); }
@@ -36,3 +43,15 @@
     .NumberInputs-Input--Right {
       border: 1px solid #74b9ee;
       color: #74b9ee; }
+
+.Viz {
+  flex: 1;
+  display: flex;
+  flex-direction: column; }
+  .Viz-Instructions {
+    color: rgba(255, 255, 255, 0.3);
+    text-align: center; }
+
+.Columns {
+  background: red;
+  flex: 1; }

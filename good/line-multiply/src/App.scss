@@ -4,11 +4,21 @@ $g: 5px; // base grid size
 $pink: #ffa8d3;
 $blue: #74b9ee;
 
+html {
+  * {
+    box-sizing: border-box;
+  }
+}
+
 .App {
   height: 100vh;
   background: rgb(22, 24, 32);
   padding: $g * 6;
   font-weight: 400;
+  font-size: $f;
+  display: flex;
+  height: 100vh;
+  flex-direction: column;
 }
 
 .Header {
@@ -51,4 +61,19 @@ $blue: #74b9ee;
       color: $blue;
     }
   }
+}
+
+.Viz {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  &-Instructions {
+    color: rgba(255, 255, 255, 0.3);
+    text-align: center;
+  }
+}
+
+.Columns {
+  background: red;
+  flex: 1;
 }
