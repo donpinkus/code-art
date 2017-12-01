@@ -29,7 +29,7 @@ class App extends Component {
         <br />
 
         <div>
-          <SquareViz num1={123} num2={123} outerDim={800} margin={100} />
+          <SquareViz num1={1} num2={123} dim={800} margin={100} />
         </div>
       </div>
     );
@@ -38,23 +38,46 @@ class App extends Component {
 
 class SquareViz extends Component {
   render() {
+    const innerWidth = this.props.dim - this.props.margin * 2;
+
     return (
-      <svg width={this.props.outerDim} height={this.props.outerDim}>
+      <svg width={this.props.dim} height={this.props.dim}>
         <g
           transform={`translate(${this.props.margin} ${this.props.margin})`}
           strokeWidth="2px"
           strokeLinecap="round"
         >
           {/* <rect width="600" height="600" fill="gray" /> */}
-          <NumberLines pink={true} dim={600} number={this.props.num1} />
-          <NumberLines pink={false} dim={600} number={this.props.num2} />
+          <Number pink={true} dim={innerWidth} number={this.props.num1} />
+          <Number pink={false} dim={innerWidth} number={this.props.num2} />
+          <DotGroup dim={innerWidth} num1={123} num2={123} />
         </g>
       </svg>
     );
   }
 }
 
-class NumberLines extends Component {
+class DotGroup extends Component {
+  render() {
+    //
+    const intersectionGroups = [{ x: 0, y: 0 }, { x: 0, y: 0 }];
+
+    return (
+      <g>
+        <circle
+          cx={0}
+          cy={0}
+          r="6"
+          fill="#F3B578"
+          strokeWidth="2px"
+          stroke="#1B1B1B"
+        />
+      </g>
+    );
+  }
+}
+
+class Number extends Component {
   render() {
     const dim = 600;
 
@@ -66,7 +89,7 @@ class NumberLines extends Component {
     let digitGroups = [];
     for (let i = 1; i <= digits; i++) {
       digitGroups.push(
-        <DigitGroup
+        <Digit
           dim={this.props.dim}
           place={i}
           number={this.props.number}
@@ -83,7 +106,7 @@ class NumberLines extends Component {
   }
 }
 
-class DigitGroup extends Component {
+class Digit extends Component {
   render() {
     const numberLength = this.props.number.toString().length;
     const digit = +this.props.number.toString()[this.props.place - 1];
